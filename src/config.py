@@ -129,6 +129,9 @@ PATTERNS: Dict[str, str] = {
     'hdfc_debit_upi': r'Rs\.?\s*(\d+[\d,]*\.?\d*)\s+(?:has been |)debited.*?(?:VPA|UPI)[:\s]+(\S+)',
     'hdfc_debit_card': r'Rs\.?\s*(\d+[\d,]*\.?\d*)\s+(?:has been |)(?:spent|debited).*?(?:card|Card).*?(?:at|for)\s+(.+?)(?:\s+on|\.|$)',
     'hdfc_credit': r'Rs\.?\s*(\d+[\d,]*\.?\d*)\s+(?:has been |)credited.*?(?:from|by)\s+(.+?)(?:\s+on|\.|$)',
+    'hdfc_cc_debit': r'Rs\.?\s*(\d+[\d,]*\.?\d*)\s+(?:is |)debited from your HDFC Bank Credit Card.*?towards\s+(.+?)(?:\s+on|\.|$)',
+    'hdfc_netbanking': r'(?:payment of|NetBanking for payment of)\s+Rs\.?\s*(\d+[\d,]*\.?\d*)\s+from\s+A/c\s+\S+\s+to\s+(.+?)(?:\s+Not|$)',
+    'hdfc_neft': r'Rs\.?\s*(\d+[\d,]*\.?\d*)\s+has been deducted from your HDFC Bank account.*?for a transfer to payee\s+(.+?)\s+via\s+(?:NEFT|IMPS|RTGS)',
 
     # ICICI (including credit cards)
     'icici_debit': r'debited\s+(?:for\s+)?(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*).*?(?:Info[:\s]+)?(.+?)(?:\.|$)',
@@ -138,11 +141,17 @@ PATTERNS: Dict[str, str] = {
     # Axis Bank
     'axis_debit': r'(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)\s+(?:debited|spent).*?(?:at|to|for)\s+(.+?)(?:\s+on|\.|$)',
     'axis_credit': r'(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)\s+(?:credited|received)',
+    'axis_credit_subject': r'(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)\s+was credited to your A/c',
+    'axis_credit_body': r'Amount Credited:\s*(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)',
+    'axis_cc_html_body': r'Transaction Amount:\s*(?:INR|USD)\s*&nbsp;\s*(\d+[\d,]*\.?\d*)\s*Merchant Name:\s*(.+?)\s+Axis Bank',
+    'axis_debit_alert': r'A/c no\.\s+\S+\s+has been debited with\s+(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)',
+    'axis_autopay': r'AutoPay transaction.*?Transaction Amount:\s*(USD|INR)\s*(\d+[\d,]*\.?\d*)\s*Merchant Name:\s*(.+?)\s+(?:Axis|Auto)',
 
     # IndusInd Bank
     'indusind_debit': r'(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)\s+(?:has been |)(?:debited|spent|withdrawn).*?(?:at|to|for|Info[:\s]+)\s*(.+?)(?:\s+on|\.|Avl|$)',
     'indusind_credit': r'(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)\s+(?:has been |)credited.*?(?:from|by)\s+(.+?)(?:\s+on|\.|$)',
     'indusind_upi': r'(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)\s+.*?(?:UPI|VPA)[:\s]+(\S+)',
+    'indusind_payment': r'Payment of INR\s+(\d+[\d,]*\.?\d*)\s+towards your IndusInd Bank Credit Card',
 
     # American Express (India - INR only)
     'amex_spend': r'(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)\s+(?:was |has been |)(?:spent|charged|used).*?(?:at|on)\s+(.+?)(?:\s+on|\.|$)',
@@ -158,6 +167,12 @@ PATTERNS: Dict[str, str] = {
 
     # Paytm
     'paytm': r'Paytm.*?(?:Paid|Sent)\s+Rs\.?\s*(\d+[\d,]*\.?\d*)\s+to\s+(.+)',
+}
+
+# Subject-only patterns (for emails with HTML bodies)
+SUBJECT_PATTERNS: Dict[str, str] = {
+    'axis_cc_subject_inr': r'(?:INR|Rs\.?)\s*(\d+[\d,]*\.?\d*)\s+spent on credit card',
+    'axis_cc_subject_usd': r'(USD)\s+(\d+[\d,]*\.?\d*)\s+spent on credit card',
 }
 
 # IMAP configuration

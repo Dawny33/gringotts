@@ -4,8 +4,9 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Optional
 import logging
+from email.header import decode_header
 
-from .config import PATTERNS, TxType, PaymentMode
+from .config import PATTERNS, SUBJECT_PATTERNS, TxType, PaymentMode
 
 logger = logging.getLogger(__name__)
 
@@ -124,33 +125,96 @@ class TransactionParser:
 
         return merchant
 
-    def parse(self, email_body: str, email_date: datetime) -> Optional[Transaction]:
+    @staticmethod
+    def _decode_subject(subject: str) -> str:
+        """Decode email subject from base64 if needed."""
+        try:
+            decoded_parts = decode_header(subject)
+            decoded_subject = ''
+            for part, encoding in decoded_parts:
+                if isinstance(part, bytes):
+                    decoded_subject += part.decode(encoding or 'utf-8')
+                else:
+                    decoded_subject += part
+            return decoded_subject
+        except:
+            return subject
+
+    def parse(self, email_body: str, email_date: datetime, email_subject: str = "") -> Optional[Transaction]:
         """
-        Parse transaction from email body.
+        Parse transaction from email body and subject.
 
         Args:
             email_body: Email body text
             email_date: Email date
+            email_subject: Email subject (optional)
 
         Returns:
             Transaction object or None if no match
         """
-        # Normalize text
+        # Decode and normalize subject
+        decoded_subject = self._decode_subject(email_subject) if email_subject else ""
+        normalized_subject = self._normalize_text(decoded_subject)
+
+        # Normalize body text
         normalized_text = self._normalize_text(email_body)
 
-        # Try each pattern
+        # Try subject patterns first (for HTML emails)
+        if normalized_subject:
+            for pattern_name, pattern in SUBJECT_PATTERNS.items():
+                try:
+                    match = re.search(pattern, normalized_subject, re.IGNORECASE)
+                    if match:
+                        # Handle USD pattern (has currency in group 1)
+                        if pattern_name == 'axis_cc_subject_usd':
+                            amount = float(match.group(2))
+                            # Try to extract merchant from body
+                            merchant_match = re.search(r'Merchant Name:\s*(.+?)\s+(?:Axis|Date)', normalized_text, re.IGNORECASE)
+                            merchant = self._clean_merchant(merchant_match.group(1)) if merchant_match else None
+                        else:
+                            amount = float(match.group(1))
+                            # Try to extract merchant from body
+                            merchant_match = re.search(r'Merchant Name:\s*(.+?)\s+(?:Axis|Date)', normalized_text, re.IGNORECASE)
+                            merchant = self._clean_merchant(merchant_match.group(1)) if merchant_match else None
+
+                        tx_type = TxType.DEBIT if 'spent' in normalized_subject.lower() else TxType.CREDIT
+                        mode = PaymentMode.CARD
+
+                        transaction = Transaction(
+                            amount=amount,
+                            tx_type=tx_type,
+                            mode=mode,
+                            merchant=merchant,
+                            date=email_date,
+                            raw_text=email_body[:200]
+                        )
+
+                        logger.debug(f"Matched subject pattern '{pattern_name}': {amount} {tx_type.value}")
+                        return transaction
+
+                except Exception as e:
+                    logger.debug(f"Subject pattern '{pattern_name}' failed: {e}")
+                    continue
+
+        # Try body patterns
         for pattern_name, pattern in PATTERNS.items():
             try:
                 match = re.search(pattern, normalized_text, re.IGNORECASE | re.DOTALL)
                 if match:
-                    # Extract amount (group 1)
-                    amount_str = match.group(1)
-                    amount = float(amount_str)
+                    # Handle axis_autopay special case (has currency in group 1)
+                    if pattern_name == 'axis_autopay':
+                        currency = match.group(1)
+                        amount = float(match.group(2))
+                        merchant = self._clean_merchant(match.group(3))
+                    else:
+                        # Extract amount (group 1)
+                        amount_str = match.group(1)
+                        amount = float(amount_str)
 
-                    # Extract merchant (group 2 if exists)
-                    merchant = None
-                    if match.lastindex and match.lastindex >= 2:
-                        merchant = self._clean_merchant(match.group(2))
+                        # Extract merchant (group 2 if exists)
+                        merchant = None
+                        if match.lastindex and match.lastindex >= 2:
+                            merchant = self._clean_merchant(match.group(2))
 
                     # Infer transaction type
                     tx_type = self._infer_tx_type(pattern_name, normalized_text)
@@ -191,7 +255,7 @@ class TransactionParser:
         """
         transactions = []
         for raw_email in emails:
-            transaction = self.parse(raw_email.body, raw_email.date)
+            transaction = self.parse(raw_email.body, raw_email.date, raw_email.subject)
             if transaction:
                 transactions.append(transaction)
 
