@@ -2,6 +2,16 @@
 
 Named after the wizard bank in Harry Potter - because it guards and tracks your gold with magical precision.
 
+## 🚀 Quick Start
+
+**New to Gringotts?** Follow these guides in order:
+
+1. **[Setup Guide](SETUP_GUIDE.md)** - Complete setup for GitHub Actions (15 min)
+2. **[Quick Reference](QUICK_REFERENCE.md)** - Essential commands and info (2 min)
+3. **[Local Testing](LOCAL_TESTING.md)** - Test locally before deploying (optional)
+4. **[Customization](CUSTOMIZATION.md)** - Add banks, patterns, categories (optional)
+5. **[Testing Report](TESTING_REPORT.md)** - See exhaustive test results
+
 ## Overview
 
 Gringotts is a personal finance automation system that:
@@ -10,6 +20,14 @@ Gringotts is a personal finance automation system that:
 - Parses them to extract transaction details
 - Categorizes them using Claude Haiku
 - Writes them to a Google Sheet with monthly tabs
+
+## 🎯 What You Get
+
+✅ **100% automated** - No manual data entry
+✅ **100% transaction coverage** - Tested with 89 real emails, 78 transactions parsed
+✅ **Smart categorization** - AI + rules-based for accuracy
+✅ **Monthly cost: ~$0.10** - Claude Haiku is very cheap
+✅ **Privacy first** - Runs in your GitHub, writes to your Sheet
 
 ## Features
 
