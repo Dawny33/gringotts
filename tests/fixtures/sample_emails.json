@@ -1,0 +1,110 @@
+{
+  "hdfc_upi_debit": {
+    "body": "Rs.2500.00 has been debited from A/c **1234 on 07-01-26. VPA swiggy@okaxis. Avl Bal: Rs.45000.00",
+    "expected": {
+      "amount": 2500.0,
+      "tx_type": "Debit",
+      "mode": "UPI",
+      "merchant": "swiggy@okaxis"
+    }
+  },
+  "hdfc_card_debit": {
+    "body": "Rs.1250.50 spent on HDFC Bank Card xx1234 at STARBUCKS INDIRANAGAR on 07-01-26. Avl Bal: Rs.43750.00",
+    "expected": {
+      "amount": 1250.5,
+      "tx_type": "Debit",
+      "mode": "Card",
+      "merchant": "STARBUCKS INDIRANAGAR"
+    }
+  },
+  "hdfc_credit": {
+    "body": "Rs.85000.00 has been credited to A/c **1234 on 01-Jan-26 from SALARY-ACME CORP. Avl Bal: Rs.128750.00",
+    "expected": {
+      "amount": 85000.0,
+      "tx_type": "Credit",
+      "mode": "NEFT",
+      "merchant": "SALARY-ACME CORP"
+    }
+  },
+  "icici_debit": {
+    "body": "Your A/c XX1234 is debited for INR 899.00 on 06-Jan-26. Info: NETFLIX SUBSCRIPTION",
+    "expected": {
+      "amount": 899.0,
+      "tx_type": "Debit",
+      "mode": "Unknown",
+      "merchant": "NETFLIX SUBSCRIPTION"
+    }
+  },
+  "icici_credit": {
+    "body": "Your A/c XX1234 is credited with INR 5000.00 on 05-Jan-26 by REFUND-FLIPKART",
+    "expected": {
+      "amount": 5000.0,
+      "tx_type": "Credit",
+      "mode": "NEFT",
+      "merchant": null
+    }
+  },
+  "icici_card": {
+    "body": "INR 3450.00 spent on ICICI Bank Card xx5678 at BIG BASKET on 07-01-26",
+    "expected": {
+      "amount": 3450.0,
+      "tx_type": "Debit",
+      "mode": "Card",
+      "merchant": "BIG BASKET"
+    }
+  },
+  "axis_debit": {
+    "body": "INR 1200.00 debited from A/c xx9012 at UBER INDIA on 06-Jan-26. Avl Bal: INR 42550.00",
+    "expected": {
+      "amount": 1200.0,
+      "tx_type": "Debit",
+      "mode": "Unknown",
+      "merchant": "UBER INDIA"
+    }
+  },
+  "indusind_upi": {
+    "body": "INR 650.00 debited from A/c xx3456 via UPI zomato@paytm on 07-Jan-26. Avl Bal: INR 41900.00",
+    "expected": {
+      "amount": 650.0,
+      "tx_type": "Debit",
+      "mode": "UPI",
+      "merchant": "zomato@paytm"
+    }
+  },
+  "amex_spend": {
+    "body": "INR 5600.00 was spent on your Amex Card ending 1234 at AMAZON INDIA on 05-Jan-26",
+    "expected": {
+      "amount": 5600.0,
+      "tx_type": "Debit",
+      "mode": "Card",
+      "merchant": "AMAZON INDIA"
+    }
+  },
+  "phonepe": {
+    "body": "Paid Rs.450.00 to Dominos Pizza on PhonePe. Transaction ID: T123456789",
+    "expected": {
+      "amount": 450.0,
+      "tx_type": "Debit",
+      "mode": "UPI",
+      "merchant": "Dominos Pizza"
+    }
+  },
+  "upi_debit_generic": {
+    "body": "You paid Rs.320.00 to RAPIDO for ride via UPI on 06-Jan-26",
+    "expected": {
+      "amount": 320.0,
+      "tx_type": "Debit",
+      "mode": "UPI",
+      "merchant": "RAPIDO"
+    }
+  },
+  "large_amount_with_commas": {
+    "body": "Rs.1,25,000.00 has been credited to A/c **1234 on 01-Jan-26 from SALARY-TECH CORP. Avl Bal: Rs.2,53,750.00",
+    "expected": {
+      "amount": 125000.0,
+      "tx_type": "Credit",
+      "mode": "NEFT",
+      "merchant": "SALARY-TECH CORP"
+    }
+  }
+}
